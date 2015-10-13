@@ -92,30 +92,6 @@ angular
         }
         request.open('GET'," http://"+$scope.hostUrl+"/DuoSubscribe5/V5Services/V5Echo/EcoService.svc/json/searchEco?searchBy=SerialNo&value="+ SerialNo +"&withDetail=false&securityToken="+ $scope.stoken +"", true);
         request.send(); 
-        
-                                                // $http({
-                                                //   method: 'GET'
-                                                //   , url: 'http://' + $scope.hostUrl + '/DuoSubscribe5/V5Services/V5Echo/EcoService.svc/json/searchEco?searchBy=SerialNo&value=' + SerialNo + '&withDetail=false&securityToken=' + $scope.stoken + ''
-                                                // })
-                                                // .then(function (response) {
-                                                //   console.log(response.data)
-                                                //   if (response.data.length >= 1) {
-                                                //     for (var i = response.data.length - 1; i >= 0; i--) {
-                                                //       $scope.orderAcc = response.data[i].PermanentRefID;
-                                                //       $scope.Serial1 = response.data[i].SerialNo1
-                                                //       $scope.Serial2 = response.data[i].SerialNo2
-                                                //     };
-                                                //     $scope.getpromotionID($scope.orderAcc);
-                                                //   }
-                                                //   else {
-                                                //     $scope.Progressbar = false;
-                                                //     console.log("there is no account number available")
-                                                //   }
-                                                // }
-                                                // ,function (response) { // optional
-                                                //   console.log("error loading account number");
-                                                //   $scope.Progressbar = false;
-                                                // });
       }
       $scope.getpromotionID = function (accID) {
 
@@ -190,7 +166,9 @@ angular
                   $scope.getpromotionName($scope.PromotionId,function(){
                     $scope.getTotaloutstanding($scope.gUAccountID,function(){
                       $scope.searchProfile($scope.cusid,function(){
-                        $scope.GetDealerDetails($scope.DealerId);
+                        $scope.GetDealerDetails($scope.DealerId,function(){
+                          $scope.GetOrderDetails($scope.gUAccountID);
+                        });
                       });
                     });
                   });                 
@@ -213,28 +191,6 @@ angular
         }
         request.open('GET',"http://" + $scope.hostUrl + "/DuoSubscribe5/V5Services/SMSAccountService/duosubscribermanagement/customer/Account.svc/Json/GetAccountInfoByGuAccountID?GUAccountID=" + accID + "&SecurityToken=" + $scope.stoken + "", true);
         request.send();
-                                                // $scope.Progressbar = true;
-                                                // $http({
-                                                //   method: 'GET',
-                                                //   url: 'http://' + $scope.hostUrl + '/DuoSubscribe5/V5Services/SMSAccountService/duosubscribermanagement/customer/Account.svc/Json/GetAccountInfoByGuAccountID?GUAccountID=' + accID + '&SecurityToken=' + $scope.stoken + ''
-                                                // })
-                                                // .then(function (response) {
-                                                //   $scope.Accno = response.data._accountNo;
-                                                //   $scope.Status = response.data._customerStatus;
-                                                //   $scope.Name = response.data._custName;
-                                                //   $scope.getpromotionName(response.data._gUPromotionID);
-                                                //   $scope.getTotaloutstanding(response.data._gUAccountID)
-                                                //   $scope.cusid = response.data._gUCustID;
-                                                //   $scope.DealerId = response.data.gUDealerID
-                                                //   $scope.searchProfile($scope.cusid);
-                                                //   $scope.GetDealerDetails($scope.DealerId);
-                                                //   console.log("account service");
-                                                //   console.log(response.data);
-                                                // }
-                                                // ,function (response) {
-                                                //   $scope.Progressbar = false;
-                                                //   console.log("error retrieving the promotion ID")
-                                                // });
       }
       $scope.getpromotionName = function (promoID,callback) {
         $scope.Progressbar = true;
@@ -271,18 +227,59 @@ angular
       }
       $scope.searchProfile = function (cusId,callback) {
         $scope.Progressbar = true;
-        $http({
-          url: 'http://' + $scope.hostUrl + '/DuoSubscribe5/V5Services/SMSProfileService/DuoSubscriberManagement/Masters/Registrations.svc/json/searchProfile?searchOption=5&searchValue=' + cusId + '&sinceId=0&securityToken=' + $scope.stoken + '',
-          method: "GET"
-        })
-        .then(function (response) {
-          console.log("Customer Details-----------")
-          console.log(response.data)
+
+        $scope.ShowAllData = true;
+        $scope.Progressbar = true;
+
+        var url = "";
+        var request = new XMLHttpRequest();
+
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                $scope.aTexts = request.responseText; 
+                if($scope.aTexts == '[]'){
+                  $mdDialog.show($mdDialog.alert().parent(angular.element(document.body)).title('Invalid STBno').content('There is no account number available').ariaLabel('Alert Dialog Demo').ok('OK').targetEvent())
+                  console.log("error loading account number");          
+                  $scope.orderAccno = "";
+                  $scope.promotionCode = "";
+                  $scope.Progressbar = false;
+                }else{
+                  $scope.atemp =[];
+                  $scope.atemp = $scope.aTexts.split(",");
+                  console.log($scope.atemp)
+                  //get permenent ref id
+                  $scope.aRefIDArr = [];
+                  $scope.aRefIDArr = $scope.atemp[21].split(":");
+                  $scope.AddressID = angular.copy($scope.aRefIDArr[1]);
+                  console.log("//AddressID...."); 
+                  console.log($scope.AddressID)
+
+                  $scope.GetAddress($scope.AddressID); 
+                }           
+              
+            }
+
         }
-        ,function (response) {console.log("error")});
+        request.onerror = function(){
+          $mdDialog.show($mdDialog.alert().parent(angular.element(document.body)).title('Network Error').content('Error Occure In the Service... Please try again later').ariaLabel('Alert Dialog Demo').ok('OK').targetEvent())
+            console.log("network error");          
+            $scope.orderAccno = "";
+            $scope.promotionCode = "";
+            $scope.Progressbar = false;
+
+        }
+        request.ontimeout = function (){
+            $mdDialog.show($mdDialog.alert().parent(angular.element(document.body)).title('Time Out').content('Request Time Out... Please try again').ariaLabel('Alert Dialog Demo').ok('OK').targetEvent())
+            console.log("time out");          
+            $scope.orderAccno = "";
+            $scope.promotionCode = "";
+            $scope.Progressbar = false;
+        }
+        request.open('GET',"http://" + $scope.hostUrl + "/DuoSubscribe5/V5Services/SMSProfileService/DuoSubscriberManagement/Masters/Registrations.svc/json/searchProfile?searchOption=5&searchValue=" + cusId + "&sinceId=0&securityToken=" + $scope.stoken + "", true);
+        request.send();  
         callback();
       }
-      $scope.GetDealerDetails = function(DealerId){
+      $scope.GetDealerDetails = function(DealerId,callback){
         $http({
           url: 'http://' + $scope.hostUrl + '/DuoSubscribe5/V5Services/SMSProfileService/DuoSubscriberManagement/Masters/Registrations.svc/json/searchProfile?searchOption=ProfileID&searchValue=' + DealerId + '&sinceId=0&securityToken=' + $scope.stoken + '',
           method: "GET"
@@ -291,10 +288,36 @@ angular
           $scope.Progressbar = false;
           console.log("Dealer Details-----------")
           console.log(response.data)
+          $scope.Dealer = response.data[0].FirstName;
         }
         ,function (response) {console.log("error"); $scope.Progressbar = false;});
+        callback();
+      }
+      $scope.GetAddress = function(addID){
+        $http({
+          method:'GET',
+          url:'http://'+$scope.hostUrl+'/DuoSubscribe5/V5Services/SMSProfileService/DuoSubscriberManagement/Masters/Registrations.svc/json/getSavedCommonAddress?guAddressID='+addID+'&securityToken='+$scope.stoken+''
+        }).then(function(response){
+          console.log(response.data)
+          $scope.Address = response.data.formatted_address;
+        },function(response){
+          console.log(response.data)
+        });
+      }
+      $scope.GetOrderDetails = function(AccID){
+        $http({
+          method:'GET',
+          url:'http://'+$scope.hostUrl+'/DuoSubscribe5/V5Services/V5Order/duosubscriberbilling/OrderService.svc/Json/getOrdersByGUAccountID?GUAccountID='+AccID+'&skip=0&take=12&status=1&date=2015/01/01&SecurityToken='+$scope.stoken+''
+
+        }).then(function(response){
+          console.log("order details")
+        },function(response){
+
+        });
       }
  	  	 
       $scope.submit = function() {}     
+      
+       
      
   })//END OF AppCtrl
