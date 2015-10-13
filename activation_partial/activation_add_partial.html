@@ -1,0 +1,92 @@
+<!--Background banner with parallax effect-->
+<md-background-banner color="#235b91" height="300px"> </md-background-banner>
+<!--CARD CONTAINER START-->
+<div class="card-container" style="padding:20px;">
+   <!--WHITEFRAME START-->
+   <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="border:1px solid #ccc;max-width:960px;margin:0 auto">
+      <!--FORM START-->
+      <form name="editForm" ng-submit="submit()" style="width:100%">
+         <md-content flex>
+         <!-- promotionProgress -->
+             <div ng-show="promotionProgress" layout="column" layout-sm="column" layout-align="center center" style="z-index: 10;position: absolute;height: 100%;width: 100%; background-color:#FFFFFF; opacity: 0.6;">                          
+                             
+            </div>
+            <div ng-show="promotionProgress" layout="column" layout-sm="column" layout-align="center center" style="z-index: 10;position: absolute;height: 100%;width: 100%;">
+                  <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                     <span style="z-index: 20;"> 
+                        <b>Loading Promotions....</b>
+                     </span>             
+                             
+            </div>
+            <div ng-show="SubmitProgress" layout="column" layout-sm="column" layout-align="center center" style="z-index: 10;position: absolute;height: 100%;width: 100%; background-color:#FFFFFF; opacity: 0.6;"></div>
+             
+            <div ng-show="SubmitProgress" layout="column" layout-sm="column" layout-align="center center" 
+               style="z-index: 10;position: absolute;height: 100%;width: 100%;">
+               <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+               <span> 
+               <b>Submitting Data....</b>
+               </span>
+            </div>
+            <div layout layout-sm="column" layout-margin>
+                
+               <section-title title="New Activation"> </section-title>
+               <md-input-container flex >
+                  <label>STB</label>
+                  <input ng-model="STBNo" required ng-disabled="fasle">
+               </md-input-container>
+            </div>
+            <div layout layout-sm="column" layout-margin>
+               <div flex="5" class="blankspace">
+               </div>
+               <div flex="15" style="margin-top:35px;" class="blankspace">
+               </div>
+               <md-input-container flex >
+                  <label>CHIP/VC</label>
+                  <input ng-model="Chip" required ng-disabled="fasle">
+               </md-input-container>
+            </div>
+            <div layout layout-sm="column" layout-margin>
+               <div flex="5" class="blankspace">
+               </div>
+               <div flex="15" style="margin-top:35px;" class="blankspace">
+               </div>                
+               <md-input-container flex>
+                  <label>Promotion</label>
+                  <md-select ng-model="Promo" ng-change="SelectedPromotion(Promo)">
+                     <md-option ng-value="promo._proPlanCode" ng-repeat="promo in promotion">{{promo._proPlanCode}}</md-option>
+                  </md-select>
+
+               </md-input-container>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" layout-align="end start" layout-margin  ng-show="false" >
+               <md-button id="mySignup" class="md-raised md-primary"  type="submit">Submit</md-button>
+            </div>
+         </md-content>
+      </form>
+   </md-whiteframe>
+   <br><br>
+   <!--WHITEFRAME END-->
+</div>
+<!--CARD CONTAINER END-->
+<div  class="lock-size" layout="row">
+<md-fab-speed-dial md-open="demo.isOpen" md-direction="{{demo.selectedDirection}}"
+   ng-class="demo.selectedMode" style="position:fixed;bottom:20px;right:20px;">
+   <md-fab-trigger>
+      <div style="padding:5px;">
+         <md-button aria-label="menu" class="md-fab md-warn" style="background-color:#db4437;">
+            <md-icon md-svg-src="img/ic_add_24px.svg" style="width:30px;" ></md-icon>
+         </md-button>
+      </div>
+   </md-fab-trigger>
+   <md-fab-actions>
+      <div style="padding:5px;">
+         <md-button aria-label="twitter" class="md-fab md-raised md-mini" ng-click="save()" style="background-color:#1abc9c;">
+            <md-icon md-svg-src="img/ic_save_24px.svg" ></md-icon>
+            <md-tooltip md-direction="left">Save Activation</md-tooltip>
+         </md-button>
+      </div>
+      <div style="padding:5px;">
+   </md-fab-actions>
+</md-fab-speed-dial>
+</div>

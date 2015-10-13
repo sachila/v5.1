@@ -1,0 +1,53 @@
+ 
+	<!--Background banner with parallax effect-->
+	<md-background-banner color="#235b91" height="300px"> </md-background-banner>
+	
+	<!--CARD CONTAINER START-->
+	<div class="card-container" style="padding:20px;">
+		<!--WHITEFRAME START-->
+		<md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="border:1px solid #ccc;max-width:960px;margin:0 auto"> 
+
+			<!--FORM START-->
+			<form name="editForm" ng-submit="submit()" style="width:100%">
+				<md-content flex>
+				<div ng-show="Progressbar" layout="column" layout-sm="column" layout-align="center center" style="z-index: 10;position: absolute;height: 100%;width: 100%; background-color:#FFFFFF; opacity: 0.6;">                          
+                             
+		            </div>
+		        <!-- Progressbar -->
+						 <div ng-show="Progressbar" layout="column" layout-sm="column" layout-align="center center" style="z-index: 10;position: absolute;height: 100%;width: 100%;">
+					    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+						    <span> 
+						    	<b>Please wait....</b>
+						    </span>
+				  		</div>
+
+
+					<div layout layout-sm="column" layout-margin>					 
+						<section-title title="Refresh"> </section-title>
+ 						
+						 <md-input-container flex="70" >
+							<label>STB</label>
+							<input ng-model="stbno" required ng-disabled="fasle">
+						</md-input-container>
+
+						<div flex layout layout-margin layout-align="start center"  ng-show="true" >
+								
+									<md-button id="mySignup" style="" class="md-raised md-primary"  type="submit">Refresh</md-button>
+								
+								
+						</div>
+
+					 </div>
+
+					  <md-divider></md-divider>
+ 			
+				</md-content>
+			</form>
+	
+		</md-whiteframe><br><br>
+		<!--WHITEFRAME END-->
+	</div>
+	<!--CARD CONTAINER END-->
+ 
+
+ 
